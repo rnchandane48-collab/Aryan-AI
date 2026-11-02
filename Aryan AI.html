@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aryan AI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1220'/%3E%3Cpath d='M16 6 7 26h4l1.8-4.5h6.4L21 26h4L16 6Zm0 8.5 2.1 5H13.9l2.1-5Z' fill='%233b82f6'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#070b14;--panel:#0b1220;--text:#e6ebf5;--muted:#8a96ad;--line:#1a2438;--accent:#3b82f6;--user:#12203a;--ai:#0e1626;--code:#050810;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+:root[data-theme=light]{--bg:#f5f7fb;--panel:#fff;--text:#0f172a;--muted:#5b667a;--line:#dde3ee;--accent:#2563eb;--user:#e3ecfd;--ai:#fff;--code:#0f172a;color-scheme:light}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+button:hover{border-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:flex;height:100%}
+.side{width:280px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:12px;gap:10px;transition:margin .2s;flex:none}
+.app.collapsed .side{margin-left:-280px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:17px}
+.brand svg{width:28px;height:28px}
+.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;padding:9px}
+.side input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.item{display:flex;align-items:center;gap:4px;border-radius:8px;padding:2px 4px 2px 10px}
+.item:hover,.item.on{background:var(--user)}
+.item .t{flex:1;text-align:left;border:0;padding:7px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .i{border:0;padding:4px 6px;opacity:.6;font-size:13px}
+.foot{display:flex;gap:8px}.foot button{flex:1}
+.empty{color:var(--muted);font-size:13px;padding:8px 10px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.top .tt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.badge{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:2px 10px;white-space:nowrap}
+.scroll{flex:1;overflow-y:auto;padding:20px 16px}
+.col{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.welcome{text-align:center;margin-top:8vh}
+.welcome svg{width:56px;height:56px}
+.welcome h1{margin:12px 0 4px;font-size:26px}
+.welcome p{color:var(--muted);margin:0 0 22px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;text-align:left}
+.cards button{padding:12px;border-radius:12px;background:var(--panel);line-height:1.4}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;border:1px solid var(--line);overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--user)}
+.msg.assistant{align-self:flex-start;background:var(--ai)}
+.msg.notice{align-self:flex-start;background:transparent;border-style:dashed;color:var(--muted);font-size:14px}
+.msg h4{margin:8px 0 4px}.msg ul{margin:6px 0;padding-left:20px}
+.msg pre{background:var(--code);color:#e6ebf5;padding:12px;border-radius:8px;overflow-x:auto;margin:8px 0}
+.msg code{font-family:ui-monospace,Consolas,monospace;font-size:13px}
+.msg a{color:var(--accent)}
+.act{margin-top:6px}.act button{font-size:12px;padding:2px 8px;color:var(--muted)}
+.comp{padding:10px 16px 14px;border-top:1px solid var(--line)}
+.comp form{max-width:760px;margin:0 auto;display:flex;gap:8px;align-items:flex-end}
+.comp textarea{flex:1;resize:none;max-height:180px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.comp .primary{border-radius:12px;padding:10px 16px}
+.comp .primary:disabled{opacity:.4;cursor:not-allowed}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:14px;max-width:min(420px,92vw);width:100%}
+dialog::backdrop{background:#0008}
+dialog h3{margin:0 0 10px}dialog input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.danger{border-color:#b4232c;color:#f26b73}
+.scrim{display:none}
+@media(max-width:760px){
+.side{position:fixed;inset:0 auto 0 0;z-index:20;margin-left:-290px!important;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.app.open .side{margin-left:0!important}
+.app.open .scrim{display:block;position:fixed;inset:0;background:#0007;z-index:10}
+.msg{max-width:96%}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<aside class="side" id="side" aria-label="Sidebar">
+ <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0b1220" stroke="#1a2438"/><path d="M16 6 7 26h4l1.8-4.5h6.4L21 26h4L16 6Zm0 8.5 2.1 5H13.9l2.1-5Z" fill="#3b82f6"/></svg>Aryan AI</div>
+ <button class="primary" id="newChat">+ New chat</button>
+ <input id="q" type="search" placeholder="Search chats" aria-label="Search chats">
+ <nav class="list" id="list" aria-label="Chat history"></nav>
+ <div class="foot"><button id="themeBtn">Theme</button><button id="settingsBtn">Settings</button></div>
+</aside>
+<div class="scrim" id="scrim"></div>
+<section class="main">
+ <header class="top">
+  <button id="menu" aria-label="Toggle sidebar">☰</button>
+  <div class="tt" id="title">Aryan AI</div>
+  <span class="badge">Demo mode · no AI provider</span>
+ </header>
+ <div class="scroll" id="scroll"><div class="col" id="col"></div></div>
+ <div class="comp"><form id="form">
+  <textarea id="input" rows="1" placeholder="Message Aryan AI…" aria-label="Message" maxlength="8000"></textarea>
+  <button class="primary" id="send" disabled>Send</button>
+ </form></div>
+</section>
+</div>
+<dialog id="dlg"><form method="dialog" id="dform"><h3 id="dt"></h3><div id="db"></div><div class="row"><button value="no" id="dno">Cancel</button><button class="primary" value="yes" id="dyes">OK</button></div></form></dialog>
+<script>
+/* ---- Config: change the name or provider here ---- */
+const CONFIG={name:"Aryan AI",storageKey:"aryan-ai:v1",maxLen:8000};
+/* AI service: null = demo mode. In stage 3, replace with a call to your own server endpoint
+   (e.g. fetch("/api/chat")) so API keys stay server-side. Never put a key in this file. */
+const AI={provider:null,async reply(chat){
+ if(!this.provider)return{role:"notice",content:"Demo mode: no AI provider is connected, so there is no AI response. Your message was saved. Connect a server-side provider to get real replies."};
+}};
+
+/* ---- Storage layer (swap for a database later) ---- */
+const Store={
+ load(){try{return JSON.parse(localStorage.getItem(CONFIG.storageKey))||{}}catch(e){return{}}},
+ save(s){try{localStorage.setItem(CONFIG.storageKey,JSON.stringify(s))}catch(e){}}
+};
+const saved=Store.load();
+const S={chats:saved.chats||[],active:saved.active||null,
+ theme:saved.theme||(matchMedia("(prefers-color-scheme: light)").matches?"light":"dark"),collapsed:!!saved.collapsed};
+const persist=()=>Store.save(S);
+const $=s=>document.querySelector(s);
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2));
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cur=()=>S.chats.find(c=>c.id===S.active);
+
+function md(t){
+ const b=[];
+ t=esc(t).replace(/```\w*\n?([\s\S]*?)```/g,(_,c)=>{b.push("<pre><code>"+c+"</code></pre>");return"@@B"+(b.length-1)+"@@"});
+ t=t.split("\n").map(l=>/^#{1,3} /.test(l)?"<h4>"+l.replace(/^#+ /,"")+"</h4>":/^[-*] /.test(l)?"<li>"+l.slice(2)+"</li>":l).join("\n");
+ t=t.replace(/(<li>.*<\/li>\n?)+/g,m=>"<ul>"+m.replace(/\n/g,"")+"</ul>")
+  .replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>")
+  .replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+  .replace(/\n/g,"<br>").replace(/(<\/ul>|<\/h4>)<br>/g,"$1");
+ return t.replace(/@@B(\d+)@@/g,(_,i)=>b[i]);
+}
+
+/* ---- Dialog helper ---- */
+function ask({title,body="",input,value="",ok="OK",danger}){
+ return new Promise(res=>{
+  const d=$("#dlg");$("#dt").textContent=title;
+  $("#db").innerHTML=input?'<input id="dv" aria-label="'+esc(title)+'" maxlength="80">':body;
+  if(input)$("#dv").value=value;
+  const y=$("#dyes");y.textContent=ok;y.className=danger?"danger":"primary";
+  d.onclose=()=>res(d.returnValue==="yes"?(input?$("#dv").value.trim():true):null);
+  d.showModal();if(input)$("#dv").select();
+ });
+}
+
+/* ---- Rendering ---- */
+function renderList(){
+ const q=$("#q").value.toLowerCase(),L=$("#list");L.innerHTML="";
+ const r=S.chats.filter(c=>!q||c.title.toLowerCase().includes(q)||c.messages.some(m=>m.content.toLowerCase().includes(q)));
+ if(!r.length){L.innerHTML='<div class="empty">'+(q?"No matching chats.":"No chats yet.")+"</div>";return}
+ r.forEach(c=>{
+  const e=document.createElement("div");e.className="item"+(c.id===S.active?" on":"");
+  e.innerHTML='<button class="t"></button><button class="i" data-a="r" aria-label="Rename chat">✎</button><button class="i" data-a="d" aria-label="Delete chat">✕</button>';
+  e.querySelector(".t").textContent=c.title;
+  e.querySelector(".t").onclick=()=>{S.active=c.id;persist();$("#app").classList.remove("open");render()};
+  e.querySelector('[data-a=r]').onclick=async()=>{const v=await ask({title:"Rename chat",input:1,value:c.title,ok:"Save"});if(v){c.title=v;persist();render()}};
+  e.querySelector('[data-a=d]').onclick=async()=>{if(await ask({title:"Delete this chat?",body:"This cannot be undone.",ok:"Delete",danger:1})){S.chats=S.chats.filter(x=>x.id!==c.id);if(S.active===c.id)S.active=null;persist();render()}};
+  L.appendChild(e);
+ });
+}
+const PROMPTS=["Explain how HTTP works in simple terms","Write a Python function to reverse a string","Help me plan a weekly study schedule","Summarize the pros and cons of remote work"];
+function renderChat(){
+ const c=cur(),col=$("#col");col.innerHTML="";$("#title").textContent=c?c.title:CONFIG.name;
+ if(!c||!c.messages.length){
+  col.innerHTML='<div class="welcome"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0b1220" stroke="#1a2438"/><path d="M16 6 7 26h4l1.8-4.5h6.4L21 26h4L16 6Zm0 8.5 2.1 5H13.9l2.1-5Z" fill="#3b82f6"/></svg><h1>Welcome to Aryan AI</h1><p>Chats are saved on this device. No AI provider is connected yet, so this is demo mode.</p><div class="cards"></div></div>';
+  PROMPTS.forEach(p=>{const b=document.createElement("button");b.textContent=p;b.onclick=()=>send(p);col.querySelector(".cards").appendChild(b)});
+  return;
+ }
+ c.messages.forEach(m=>{
+  const e=document.createElement("div");e.className="msg "+m.role;e.innerHTML=md(m.content);
+  if(m.role==="assistant"){const a=document.createElement("div");a.className="act";const b=document.createElement("button");b.textContent="Copy";
+   b.onclick=async()=>{try{await navigator.clipboard.writeText(m.content);b.textContent="Copied"}catch(x){b.textContent="Copy failed"}setTimeout(()=>b.textContent="Copy",1500)};a.appendChild(b);e.appendChild(a)}
+  col.appendChild(e);
+ });
+ const s=$("#scroll");s.scrollTop=s.scrollHeight;
+}
+function render(){
+ document.documentElement.dataset.theme=S.theme;
+ $("#app").classList.toggle("collapsed",S.collapsed);
+ renderList();renderChat();
+}
+
+/* ---- Actions ---- */
+function newChat(){const c=cur();if(c&&!c.messages.length){$("#input").focus();return}
+ const n={id:uid(),title:"New chat",messages:[],created:Date.now()};S.chats.unshift(n);S.active=n.id;persist();render();$("#input").focus()}
+async function send(text){
+ text=(text||"").trim();if(!text||text.length>CONFIG.maxLen)return;
+ let c=cur();if(!c){newChat();c=cur()}
+ if(!c.messages.length)c.title=text.slice(0,40);
+ c.messages.push({id:uid(),role:"user",content:text,t:Date.now()});persist();render();
+ let r;try{r=await AI.reply(c)}catch(e){r={role:"notice",content:"Something went wrong. Please try again."}}
+ if(r){c.messages.push({id:uid(),role:r.role,content:r.content,t:Date.now()});persist();if(S.active===c.id)render();else renderList()}
+}
+
+/* ---- Wiring ---- */
+const inp=$("#input"),sb=$("#send");
+inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px";sb.disabled=!inp.value.trim()});
+inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing){e.preventDefault();$("#form").requestSubmit()}});
+$("#form").addEventListener("submit",e=>{e.preventDefault();const v=inp.value;inp.value="";inp.style.height="auto";sb.disabled=true;send(v)});
+$("#newChat").onclick=()=>{newChat();$("#app").classList.remove("open")};
+$("#q").addEventListener("input",renderList);
+$("#themeBtn").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";persist();render()};
+$("#menu").onclick=()=>{if(matchMedia("(max-width:760px)").matches)$("#app").classList.toggle("open");else{S.collapsed=!S.collapsed;persist();render()}};
+$("#scrim").onclick=()=>$("#app").classList.remove("open");
+$("#settingsBtn").onclick=async()=>{
+ const ok=await ask({title:"Settings",body:'<p>Mode: <b>Demo</b> (no AI provider connected).<br>Storage: this browser only.</p><p>Clear all chat history from this device?</p>',ok:"Clear all history",danger:1});
+ if(ok){S.chats=[];S.active=null;persist();render()}
+};
+render();
+</script>
+</body>
+</html>
